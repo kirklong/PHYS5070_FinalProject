@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
+import copy
+
 def Δr(coords,masses,nBodies,G):
     x,y,z,vx,vy,vz = coords
     Δ = np.copy(coords)
@@ -31,5 +33,25 @@ def E(coords,masses,nBodies,G=6.67408313131313e-11):
         totalU += -G*np.sum(masses[n]*masses[n+1:]/d(coords,n,np.arange(nBodies-(n+1))+n+1))
     totalK = np.sum(masses*(vx**2+vy**2+vz**2))/2.
     return totalK + totalU
+
+def acceptTimeStep(system,Δt,yrErr=1e-10,G=6.67408313131313e-11): #adaptive timestep
+    yearSec = 365*24*3600.
+    maxErr = Δt/yearSec*yrErr
+    Ei = E(system.getCoords(),system.getMasses(),system.nBodies,G)
+    Ef = 0.; rescale = 1
+    accept = False
+    while accept == False and rescale <2**10:
+        tmpSys = copy.deepcopy(system)
+        tmpSys.update(Δt/rescale,G)
+        Ef = E(tmpSys.getCoords(),tmpSys.getMasses(),tmpSys.nBodies,G)
+        if np.abs((Ef-Ei)/Ei) < maxErr:
+            accept = True
+        else:
+            rescale *= 2
+    return accept, Δt/rescale
+
+
+
+
 
 
