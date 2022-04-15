@@ -17,13 +17,12 @@ def Δr(coords,masses,nBodies,massiveInd,closeInds,G,c=2.99792458e8):
         Δvy = np.sum(-G*masses[mask]*(y[n]-y[mask])/sep**3)
         Δvz = np.sum(-G*masses[mask]*(z[n]-z[mask])/sep**3)
         if n in closeInds: #do relativistic correction assuming m << M, m = masses[closeInd] M = masses[massiveInd]
-            sep = np.sqrt((x[massiveInd]-x[n])**2+(y[massiveInd]-y[n])**2+(z[massiveInd]-z[n])**2)
-            α = G*masses[massiveInd]/sep**3/(c)**2
-            β = 4*G*masses[n]/sep - ((vx[massiveInd]-vx[n])**2 + (vy[massiveInd]-vy[n])**2 + (vz[massiveInd]-vz[n]**2)) 
-            γ = 4*((x[n]-x[massiveInd])*(vx[n]-vx[massiveInd]) + (y[n]-y[massiveInd])*(vy[n]-vy[massiveInd]) + (z[n]-z[massiveInd])*(vz[n]-vz[massiveInd]))
-            Δvx += α*(β*(x[n]-x[massiveInd] + γ*(vx[n]-vx[massiveInd])))
-            Δvy += α*(β*(y[n]-y[massiveInd] + γ*(vy[n]-vy[massiveInd])))
-            Δvz += α*(β*(z[n]-z[massiveInd] + γ*(vz[n]-vz[massiveInd])))
+            sep = np.sqrt((x[n]-x[massiveInd])**2+(y[n]-y[massiveInd])**2+(z[n]-z[massiveInd])**2)
+            v2 = ((vx[n]-vx[massiveInd])**2 + (vy[n]-vy[massiveInd])**2 + (vz[n]-vz[massiveInd])**2)
+            correction = 3*v2/c**2 #Goldstein classical mechanics weak-field GR; https://astronomy.stackexchange.com/questions/7700/what-is-the-correct-ratio-of-newtonian-to-general-relativistic-gravitational-eff
+            Δvx += G*masses[massiveInd]*(x[n]-x[massiveInd])/sep**3 * correction 
+            Δvy += G*masses[massiveInd]*(y[n]-y[massiveInd])/sep**3 * correction
+            Δvz += G*masses[massiveInd]*(z[n]-z[massiveInd])/sep**3 * correction
 
         Δ[3][n] = Δvx; Δ[4][n] = Δvy; Δ[5][n] = Δvz
         
