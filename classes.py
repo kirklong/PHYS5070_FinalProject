@@ -5,6 +5,7 @@ import numpy as np
 class coords:
     """
     position records in cartesian space, goes like coords.x, coords.y, coords.z
+    takes as input: x,y,z (floats)
     """
     def __init__(self,x,y,z):
         if isinstance(x,float) and isinstance(y,float) and isinstance(z,float):
@@ -21,6 +22,7 @@ class coords:
 class velocities:
     """
     velocity records in cartesian spaces, goes like velocities.x, velocities.y, velocities.z
+    takes as input: vx,vy,vz (floats)
     """
     def __init__(self,vx,vy,vz):
         if isinstance(vx,float) and isinstance(vy,float) and isinstance(vz,float):
@@ -38,6 +40,7 @@ class velocities:
 class body:
     """
     class containing coords, velocities, and mass of each body (i.e. Sun, planet, etc.)
+    Takes as input: p: array of form [x,y,z]; v: array of form [vx,vy,vz]; mass: Float value for mass of body
     """
     def __init__(self,p,v,mass):
         try:
@@ -61,6 +64,10 @@ class system:
     Optionally applies relavistic correction to gravity assuming one body (massiveInd) is much more massive than the others,
     with corrections calculated on smaller bodies that are "close enough" (closeInds). 
     Also keeps track of timestep system is evolved with and total evolved time of system.
+    input parameters: bodies: a list of bodies in the system generated via the body class; 
+                      massiveInd: the index of the largest body, which should be much more massive than smaller bodies, to apply relativity;
+                      closeInds: indices of the satellite bodies to apply relativity to;
+                      Δt: the time step of which to evolve the system
     """
     def __init__(self,bodies,Δt=1.,massiveInd=0,closeInds=[]):
         try:
@@ -75,6 +82,10 @@ class system:
             raise Exception("Bodies should be passed in as a list, massiveInd as an int, closeInds as a list, Δt as float")
     
     def getCoords(self): #get body all body coordinates in np arrays, easier to vectorize/operate on
+        """
+        returns x,y,z,vx,vy,vz arrays containing information of all bodies
+        i.e. x = [body1.pos.x,body2.pos.x,...,bodyn.pos.x]
+        """
         x = np.array([self.bodies[i].pos.x for i in range(self.nBodies)])
         y = np.array([self.bodies[i].pos.y for i in range(self.nBodies)])
         z = np.array([self.bodies[i].pos.z for i in range(self.nBodies)])
@@ -87,27 +98,45 @@ class system:
         return coords
     
     def getMasses(self):
+        """
+        returns list of all masses in system, in order of body input
+        """
         masses = np.array([self.bodies[i].m for i in range(self.nBodies)])
         return masses
 
-    def update(self,G=6.67408313131313e-11,yrErr=1e-10,getCoords=getCoords,getMasses=getMasses):
+    def update(self,G=6.67408313131313e-11,yrErr=1e-10,integrator="RK4",checkT=False,getCoords=getCoords,getMasses=getMasses):
+        """
+        advances the system one timestep, according to timestep assigned and integration method (either VV = velocity-verlet or RK4 = 4th order Runge-Kutta)
+        params: G: Gravitational constant (defaults to SI value); yrErr: maximum acceptable energy loss per year, if using RK4 and Newtonian gravity;
+                integrator: choose from either 4th order Runge-Kutta (RK4) or velocity-verlet (VV) integration methods;
+                checkT: Bool, if using RK4 and you want an adapative time step
+        """
+        
         coords = getCoords(self); masses = getMasses(self)
         Δt = self.Δt
-        accept,rescale = acceptTimeStep(self,Δt/self.ΔtMod,yrErr,G) #try undoing timestep shrink
-        
-        if accept == True:
-            self.ΔtMod = rescale
-        else:
-            print("Timestep could not be made small enough to satisfy error tolerance, continuing anyways")
+        if integrator == "RK4":
+            accept, rescale = True, 1
+            if checkT == True:
+                accept,rescale = acceptTimeStep(self,Δt/self.ΔtMod,yrErr,G) #try undoing timestep shrink
 
-        self.T += self.Δt/(365*24*3600)/rescale
+            if accept == True:
+                self.ΔtMod = rescale
+            else:
+                raise Exception("Timestep could not be made small enough to satisfy error tolerance")
+
+            self.T += self.Δt/(365*24*3600)/rescale    
+        elif integrator == "VV":
+            self.T += self.Δt/(365*24*3600)
+        else:
+            raise Exception("Integrator not recognized: choose from VV (velocity-verlet) or RK4 (4th order Runge-Kutta)")
         
-        x,y,z,vx,vy,vz = nBodyStep(coords,masses,self.nBodies,self.Δt,self.massiveInd,self.closeInds,G) #from functions.py
+        x,y,z,vx,vy,vz = nBodyStep(coords,masses,self.nBodies,self.Δt,self.massiveInd,self.closeInds,G,integrator=integrator) #from functions.py
         for n in range(self.nBodies):
             self.bodies[n] = body([x[n],y[n],z[n]],[vx[n],vy[n],vz[n]],self.bodies[n].m)
 
+
     def __repr__(self):
-        return "System of nBodies = {0}\naccess each body's info with system.bodies\nCurrent Δt = {1:.2g} years, system has evolved {2:.2g} total years".format(self.nBodies,self.Δt/(365*24*3600)/self.ΔtMod,self.T/(365*24*3600))
+        return "System of nBodies = {0}\naccess each body's info with system.bodies\nCurrent Δt = {1:.2g} years, system has evolved {2:.2g} total years".format(self.nBodies,self.Δt/(365*24*3600)/self.ΔtMod,self.T)
 
 
 
