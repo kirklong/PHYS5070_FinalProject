@@ -11,17 +11,17 @@ For reference, the observed total precession of Mercury's perihelion is ~5.75"/y
 
 ## The process: 
 
-I decided to try a mostly object oriented approach for this project as I don't usually do that (usually I prefer to work in Julia, which is more functional). The file (`classes.py`)[classes.py] contains the functions that build these objects, culminating in the `system` class, which contains the entire "solar system" in my code. The `system` class has an `update` method that evolves the system forward in time according to a specified time step, with the option to choose between RK4 and a velocity-verlet integration scheme.
+I decided to try a mostly object oriented approach for this project as I don't usually do that (usually I prefer to work in Julia, which is more functional). The file [`classes.py`](classes.py) contains the functions that build these objects, culminating in the `system` class, which contains the entire "solar system" in my code. The `system` class has an `update` method that evolves the system forward in time according to a specified time step, with the option to choose between RK4 and a velocity-verlet integration scheme.
 
-The file (`functions.py`)[functions.py] contains the physics of the simulation, most importantly in the `Δr` function. This is what I numerically integrate, with force interactions between Newtonian/Keplerian bodies going as usual like 1/r^2. Relativity can also be "turned on" for this function for specified bodies of the system (in my case I turn on relativity for the Mercury-Sun interaction only) using a weak-field approximation of GR, where the mass of the orbiting body (i.e. a planet like Mercury) is much less than the mass of the central object (i.e. a star like our Sun).
+The file [`functions.py`](functions.py) contains the physics of the simulation, most importantly in the `Δr` function. This is what I numerically integrate, with force interactions between Newtonian/Keplerian bodies going as usual like 1/r^2. Relativity can also be "turned on" for this function for specified bodies of the system (in my case I turn on relativity for the Mercury-Sun interaction only) using a weak-field approximation of GR, where the mass of the orbiting body (i.e. a planet like Mercury) is much less than the mass of the central object (i.e. a star like our Sun).
 
-In this case I use the following approximation ((equation 2 from Parsa+2017)[https://www.eso.org/public/archives/announcements/pdf/ann17051a.pdf], but also given in many other places):
+In this case I use the following approximation ([equation 2 from Parsa+2017](https://www.eso.org/public/archives/announcements/pdf/ann17051a.pdf), but also given in many other places):
 
-!(GR)[GREquation.png]
+![GREquation.png](GR)
 
 The first term is (as expected) the Newtonian form, whereas all the other terms are perturbations due to the curvature of space-time in GR caused by the Sun's large mass.
 
-To simulate the solar system I first start with initial conditions from JPL in the ecliptic reference frame, queried via emailed jobs like: 
+To simulate the solar system I first start with initial conditions from JPL in the ecliptic reference frame, queried via emailed jobs to horizons@ssd.jpl.nasa.gov like: 
 
 ```
 !$$SOF
@@ -49,7 +49,7 @@ Validation tests were performed on both integration schemes for the following ca
 3. Calculating the Earth's orbit in just a two-body interaction with relativity turned on, and confirming that this does not affect the orbit.
 4. Calculating Mercury's orbit in just a two-body interaction with relativity turned on, and confirming that this *does* change the orbit.
 
-These tests + resulting plots can be found in the (`tests.ipynb`)[tests.ipynb] notebook.
+These tests + resulting plots can be found in the [`tests.ipynb`](tests.ipynb) notebook.
 
 ## Results: 
 
