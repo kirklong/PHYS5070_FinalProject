@@ -17,7 +17,7 @@ The file [`functions.py`](functions.py) contains the physics of the simulation, 
 
 In this case I use the following approximation ([equation 2 from Parsa+2017](https://www.eso.org/public/archives/announcements/pdf/ann17051a.pdf), but also given in many other places):
 
-![GREquation.png](GR)
+[GREquation.png](GR)
 
 The first term is (as expected) the Newtonian form, whereas all the other terms are perturbations due to the curvature of space-time in GR caused by the Sun's large mass.
 
