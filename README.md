@@ -35,7 +35,7 @@ COMMAND='301'
 !$$EOF
 ```
 
-Where `command` is the solar system body we want to retrieve data for (100 = Mercury, 200 = Venus, 300 = Earth, 301 = the Moon, etc.). This returns the most up-to-date ephemeride data (and much more), of which we use initial x,y,z,vx,vy,vz parameters. 
+Where `command` is the solar system body we want to retrieve data for (199 = Mercury, 299 = Venus, 399 = Earth, 301 = the Moon, etc.). This returns the most up-to-date ephemeride data (and much more), of which we use initial x,y,z,vx,vy,vz parameters. 
 
 After inputting these initial parameters I then evolve the solar system in time. After the time evolution has finished I use Mercury's known longitude of ascending node, argument of perihelion, and inclination from the ecliptic to transform the coordinates into Mercury's orbital frame. I then find the point of periapsis for each orbit by calculating the set of minimum distances from the Sun in this frame, and I return the angle φ that corresponds to each. We can then plot this angle over time to see how it evolves, as this indicates precession! Since the precession is quite small over a single orbital period we have to integrate for long time scales to resolve this, and there is some inherent numerical noise related to the timestep as we will not always exactly sample where perihelion occurs. 
 
@@ -52,8 +52,14 @@ Validation tests were performed on both integration schemes for the following ca
 These tests + resulting plots can be found in the [`tests.ipynb`](tests.ipynb) notebook.
 
 ## Results: 
+Sadly, this code is I think too slow / the integrator of too low order to recover the precession. I've spent the last two weeks trying to finagle it into working and I just can't get it to reproduce anything sensible. Here's a sample plot showing the "precession" of Mercury in the full solar system, integrated over 1,000 years with a timestep of 1e-4 times Mercury's orbital period. 
 
+![precession](totalPrecession.png)
+
+We can see that there's some sort of "scanning" effect, which I think is due to the simulation not having a point exactly at perihelion at each orbit, thus it bounces around in cycles related to the timestep. I've included a fit to the bulk "pattern", but you can see it's very poor, and the value is too low in this case (we would expect a total precession rate of ~2.8e-5 rad/year from the planets + relativity). 
 
 
 ## Conclusions: 
+
+This is harder than I thought it was going to be...and I can't find an example of this working successfully on the internet. I found a few people who had done just the GR bit, but they all relied on fancier packages (i.e. Rebound) to integrate / simulate for them, and I wanted to see if I could do everything myself. In comparing between that kind of code and mine though it does seem like there aren't any obvious errors, so it is likely just this integration/timestepping issue. If I had more time I might try to implement one of these fancier integration schemes but I'm basically out of time and have already spent way too long messing with this so I'm calling it a day.
 
