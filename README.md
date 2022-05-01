@@ -51,6 +51,12 @@ Validation tests were performed on both integration schemes for the following ca
 
 These tests + resulting plots can be found in the [`tests.ipynb`](tests.ipynb) notebook.
 
+It also looks fine by eye -- here's an example of the solar system integrated for 250 years (to capture Pluto's orbit) output by the code: 
+
+![inner solar system](innerSolarSystem.png)
+
+![outer solar system](outerSolarSystem.png)
+
 ## Results: 
 Sadly, this code is I think too slow / the integrator of too low order to recover the precession. I've spent the last two weeks trying to finagle it into working and I just can't get it to reproduce anything sensible. Here's a sample plot showing the "precession" of Mercury in the full solar system, integrated over 1,000 years with a timestep of 1e-4 times Mercury's orbital period. 
 
