@@ -28,15 +28,7 @@ def Δr(coords,masses,nBodies,massiveInd,closeInds,G,c=2.99792458e8):
         Δvz = np.sum(-G*masses[mask]*(z[n]-z[mask])/sep**3)
         if n in closeInds: #do relativistic correction assuming m << M, m = masses[closeInd] M = masses[massiveInd]
             sep = np.sqrt((x[n]-x[massiveInd])**2+(y[n]-y[massiveInd])**2+(z[n]-z[massiveInd])**2)
-            v2 = (vx[n]-vx[massiveInd])**2 + (vy[n]-vy[massiveInd])**2 + (vz[n]-vz[massiveInd])**2
-            # term1 = G*masses[massiveInd]/(c**2 * sep**3)
-            # term2 = 4*G*masses[massiveInd]/sep
-            # term3 = -v2
-            # term4 = 4*((vx[n]-vx[massiveInd])*(x[n]-x[massiveInd])+(vy[n]-vy[massiveInd])*(y[n]-y[massiveInd])+(vz[n]-vz[massiveInd])*(z[n]-z[massiveInd]))
-            # Δvx += term1*(term2*(x[n]-x[massiveInd])+term3*(x[n]-x[massiveInd])+term4*(vx[n]-vx[massiveInd]))
-            # Δvy += term1*(term2*(y[n]-y[massiveInd])+term3*(y[n]-y[massiveInd])+term4*(vy[n]-vy[massiveInd]))
-            # Δvz += term1*(term2*(z[n]-z[massiveInd])+term3*(z[n]-z[massiveInd])+term4*(vz[n]-vz[massiveInd]))
-            
+            v2 = (vx[n]-vx[massiveInd])**2 + (vy[n]-vy[massiveInd])**2 + (vz[n]-vz[massiveInd])**2            
             
             Δvx = -G*masses[massiveInd]/(c**2*sep**3)*((x[n]-x[massiveInd])*(c**2 - 4*G*masses[massiveInd]/sep + v2) - 4*(vx[n]-vx[massiveInd])*((vx[n]-vx[massiveInd])*(x[n]-x[massiveInd])))
             Δvy = -G*masses[massiveInd]/(c**2*sep**3)*((y[n]-y[massiveInd])*(c**2 - 4*G*masses[massiveInd]/sep + v2) - 4*(vy[n]-vy[massiveInd])*((vy[n]-vy[massiveInd])*(y[n]-y[massiveInd])))
