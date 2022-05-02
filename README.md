@@ -58,12 +58,14 @@ It also looks fine by eye -- here's an example of the solar system integrated fo
 ![outer solar system](outerSolarSystem.png)
 
 ## Results: 
+
 Sadly, this code is I think too slow / the integrator of too low order to recover the precession. I've spent the last two weeks trying to finagle it into working and I just can't get it to reproduce anything sensible. Here's a sample plot showing the "precession" of Mercury in the full solar system, integrated over 1,000 years with a timestep of 1e-4 times Mercury's orbital period. 
 
 ![precession](totalPrecession.png)
 
 We can see that there's some sort of "scanning" effect, which I think is due to the simulation not having a point exactly at perihelion at each orbit, thus it bounces around in cycles related to the timestep. I've included a fit to the bulk "pattern", but you can see it's very poor, and the value is too low in this case (we would expect a total precession rate of ~2.8e-5 rad/year from the planets + relativity). 
 
+All of the figures + general process are generated with the [`results.ipynb`](results.ipynb) notebook.
 
 ## Conclusions: 
 
