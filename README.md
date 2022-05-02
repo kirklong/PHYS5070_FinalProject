@@ -65,7 +65,11 @@ Sadly, this code is I think too slow / the integrator of too low order to recove
 
 We can see that there's some sort of "scanning" effect, which I think is due to the simulation not having a point exactly at perihelion at each orbit, thus it bounces around in cycles related to the timestep. I've included a fit to the bulk "pattern", but you can see it's very poor, and the value is too low in this case (we would expect a total precession rate of ~2.8e-5 rad/year from the planets + relativity). 
 
-All of the figures + general process are generated with the [`results.ipynb`](results.ipynb) notebook.
+I did try to run one more at extremely high precision, capturing just two orbits with a timestep equal to 1e-7 * Mercury's period with all of the planets. The fit here is (if believable) better, as it's at least the right order of magnitude (10^-5), but it's in the wrong direction? This version included all of the planets, so I thought about running it again with just Mercury but it took ~20 hours to do this one so I unfortunately don't think I have time...
+
+![precession](totalPrecessionHighRes.png)
+
+All of the figures + general process were generated with the [`results.ipynb`](results.ipynb) notebook.
 
 ## Conclusions: 
 
