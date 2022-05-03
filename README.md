@@ -71,6 +71,10 @@ I did try to run one more at extremely high precision, capturing just two orbits
 
 All of the figures + general process were generated with the [`results.ipynb`](results.ipynb) notebook.
 
+**Update:** I did start a run of Mercury and the Sun alone at the same (much) higher resolution, and it returned a value also of the right order of magnitude (I got ~4e-6 rad/year when it should be ~2e-6 rad/year), so I think my problem is that my code truly just wasn't efficient enough / I didn't wait long enough...Here's a screenshot of that, generated from the [`longPrecession.py`](longPrecession.py) script.
+
+![precession](MercuryAlonePrecession.png)
+
 ## Conclusions: 
 
 This is harder than I thought it was going to be...and I can't find an example of this working successfully on the internet. I found a few people who had done just the GR bit, but they all relied on fancier packages (i.e. Rebound) to integrate / simulate for them, and I wanted to see if I could do everything myself. In comparing between that kind of code and mine though it does seem like there aren't any obvious errors, so it is likely just this integration/timestepping issue. If I had more time I might try to implement one of these fancier integration schemes but I'm basically out of time and have already spent way too long messing with this so I'm calling it a day.
