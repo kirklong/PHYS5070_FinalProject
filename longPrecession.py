@@ -63,16 +63,16 @@ Sun = body([0.,0.,0.,],[0.,0.,0.,],Msun) #sun-centered version
 
 yearSec = 365*24*3600
 MP = 87.96926/365*yearSec
-SunMercury = system([Sun,Mercury],Δt=MP/100,massiveInd=0,closeInds=[1])
-initialOrbit = getPlotData(SunMercury,stopT=MP/yearSec+MP/100/yearSec,cadence=MP/100/yearSec)
-stop = 100*3750 #15,000 centuries = 180 degrees, so 3750 centuries ~ 45 degrees, should take ~ 24 hours (slow python code woohoo)
+SunMercury = system([Sun,Mercury],Δt=MP/1e7,massiveInd=0,closeInds=[1])
+initialOrbit = getPlotData(SunMercury,stopT=MP/yearSec+MP/1e7/yearSec,cadence=MP/1e7/yearSec)
+stop = MP/yearSec 
 strlen = 0
 
 while SunMercury.T < stop:
     strlen = trackCompletion(SunMercury.T,stop,strlen)
     SunMercury.update()
     
-endOrbit = getPlotData(SunMercury,stopT=stop+MP/yearSec+MP/100/yearSec,cadence=MP/100/yearSec)
+endOrbit = getPlotData(SunMercury,stopT=stop*2+MP/1e7/yearSec,cadence=MP/1e7/yearSec)
 
 with open('orbits.pkl','wb') as f:
     pickle.dump([initialOrbit,endOrbit],f)
